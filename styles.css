@@ -1,0 +1,7 @@
+#board {
+    display: grid;
+    height: 90vh;
+    width: 90vh;
+    background-color: rgba(0,0,0,.2);
+    margin: auto;
+}
