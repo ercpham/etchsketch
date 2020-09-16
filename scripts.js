@@ -1,5 +1,9 @@
+const INITIAL_BOARD_SIZE = 16;
+const PROMPT_TEXT = "How many rows and columns?";
+
 /**
  * author: mjackson
+ * link: https://gist.github.com/mjackson/5311256
  * Converts an RGB color value to HSL. Conversion formula
  * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
  * Assumes r, g, and b are contained in the set [0, 255] and
@@ -34,6 +38,10 @@ function rgbToHsl(r, g, b) {
     return [ h, s, l ];
   }
 
+/**
+ * Changes element background color to of random hue, full saturation, and same 
+ * lightness
+ */
 function color() {
     let hue = Math.round(Math.random()*360);
     let matches = this.style.backgroundColor.match(/\d+/g);
@@ -42,16 +50,22 @@ function color() {
     this.style.backgroundColor = `hsl(${hue}, 100%, ${Math.round(hslCode[2]*100)}%)`;
 }
 
-function lighten() {
+/**
+ * Changes element background color to a color with 0% saturation and 10%
+ * less lightness than previous value
+ */
+function darken() {
     let matches = this.style.backgroundColor.match(/\d+/g);
     let hslCode = rgbToHsl(matches[0], matches[1], matches[2]);
     this.style.backgroundColor = `hsl(0,0%,${Math.round(hslCode[2]*100)-10}%)`;
 }
 
-let grid_size = 16;
-const cell_size = "1fr";
+/**
+ * Create the grid with the global grid_size
+ */
+function setBoard(grid_size) {
 
-function setBoard() {
+    const cell_size = "1fr";
 
     let rowcolSpecs = "";
     for (let i = 0; i < grid_size; i++) {
@@ -71,23 +85,30 @@ function setBoard() {
         cell.style.backgroundColor = "hsl(0,0%,95%)";
         cell.classList.add("cell");
         cell.onmouseover = color;
-        cell.onmouseout = lighten;
+        cell.onmouseout = darken;
         board.appendChild(cell);
     }
     
 }
 
+/**
+ * Reset the color of the cells on the board and prompt the user
+ * to recreate it with a new size.
+ */
 function clearBoard() {
     let elements = document.getElementsByClassName("cell");
     console.log(elements);
     for (let i = 0; i < elements.length; i++) {
         elements[i].style.backgroundColor = "hsl(0,0%,95%)";
     }
-    grid_size = parseInt(prompt("How big is the board?"));
-    setBoard();
+    let grid_size = parseInt(prompt(PROMPT_TEXT));
+    setBoard(grid_size);
+    let dimText = document.getElementById("dimensions");
+    dimText.textContent = `Current Board Dimensions: ${grid_size}x${grid_size}`
 }
 
+/* Clear button functionality */
 let button = document.getElementById("clear");
 button.addEventListener("click", clearBoard);
 
-setBoard();
+setBoard(INITIAL_BOARD_SIZE);
